@@ -174,11 +174,11 @@ export default function page() {
     }
     },[audioCanPlay, selectedTrack])
 
-    
+    // calculates the duration of the marquee scrolling animation - produces a consistent perceived scroll rate for all tracks regardless of the text length
     const calcScrollDuration = () => {
+        // the scrolling marquee element
         let marquee = document.getElementById("radioMarquee") as HTMLDivElement;
-        let hiddenMarquee = document.getElementById("hiddenMarquee") as HTMLDivElement;
-        console.log(marquee.style.animationDuration, hiddenMarquee.style.animationDuration)
+        // returns the ceiling of the marquee's width divided by 100, plus 2, to be used as the number of seconds the marquee will take to scroll for a given track
         return Math.ceil(marquee.offsetWidth / 100) + 2
     }
     
@@ -326,15 +326,15 @@ export default function page() {
     return (
     <div id='radio' className={`hidden absolute lg:flex fixed ${ handleTop() } w-96 h-fit flex-col items-center transition-top ease-in-out duration-700`}>
 
-        <audio id="hiss" autoPlay={false} src='/audio/tapehiss.wav' loop/>
+        <audio id="hiss" autoPlay={false} src='./src/assets/audio/tapehiss.wav' loop/>
         <audio id="audioPlayer" autoPlay={false} src={currentSrc} onCanPlay={() => setAudioCanPlay(true)} onEnded={() => nextTrack()}/>
 
         <div className='w-full h-fit relative bg-slate-200' onClick={(()=>toggleTape())}>
-            <img className={`absolute object-contain z-50 ${!!tapeArt ? "top-[-22.4rem]" : "top-[-37.6rem]"} transition-top ease-in-out ${!!tapeArt ? "duration-700" : 'duration-[900ms]'}`} src={'/radio_404_album.jpg'} alt='cover art' width={384} height={601}/>
+            <img className={`absolute object-contain z-50 ${!!tapeArt ? "top-[-22.4rem]" : "top-[-37.6rem]"} transition-top ease-in-out ${!!tapeArt ? "duration-700" : 'duration-[900ms]'}`} src={'./src/assets/images/radio_404_album.jpg'} alt='cover art' width={384} height={601}/>
         </div>
 
         <div className={`w-full h-fit relative bg-slate-200`} onClick={()=>toggleTape()}>
-            <img className='object-contain z-40' src={'/radio_404_tape.png'} alt='current track album art' width={384} height={243}/>
+            <img className='object-contain z-40' src={'./src/assets/images/radio_404_tape.png'} alt='current track album art' width={384} height={243}/>
         </div>
         
         <div className={`flex flex-row items-center justify-around h-14 w-96 bg-white rounded-br-lg shadow-[-2px_2px_6px_rgb(36,36,36)]`}>
@@ -343,7 +343,7 @@ export default function page() {
                 <i className={`bi ${!playing ? `bi-play-fill` : `bi-pause-fill`} text-4xl mx-2 text-bill-magenta drop-shadow-[-1px_1px_0px_rgb(0,0,0)]`}/>
             </div>
 
-            <div className={`hairline text-2xl font-semibold marquee w-72 z-30`} onClick={() => nextTrack()}>
+            <div className={`hairline text-2xl font-bold marquee w-72 z-30`} onClick={() => nextTrack()}>
 
                 <ul id="radioMarquee" className='marquee__content' style={{animationDuration: `${marqueeScrollDuration}s`}}>
                     <li>

@@ -8,6 +8,7 @@
 }
 
 .marquee__content {
+    font-weight: bolder;
     animation: scroll 10s linear infinite;
     flex-shrink: 0;
     display: flex;
