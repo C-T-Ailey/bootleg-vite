@@ -1,21 +1,35 @@
+// hooks
 import { useState } from 'react'
+
+// css imports
 import 'bootstrap-icons/font/bootstrap-icons.css'
 import "@fontsource/bungee"
 import "@fontsource/bungee-hairline"
 import "@fontsource/permanent-marker"
 import './App.css'
+
+// component imports
 import Radio from './components/radio/Radio'
+import { Routes, Route, NavLink } from 'react-router-dom'
+
+// page imports
+import Home from './pages/home/Home'
+import Store from './pages/store/Store'
+import About from './pages/about/About'
 
 function App() {
+
+  const [radioUnlocked,setRadioUnlocked] = useState<boolean>(true)
+
   const hiddenLinks: string = "h-16"
 
   const shownLinks: string = "h-72"
 
-  const deskLinks: string = 'hidden lg:w-[50vw] lg:max-w-fit lg:h-fit lg:flex lg:justify-evenly lg:pr-4 lg:text-xl text-bill-magenta drop-shadow-[-2px_2px_0_rgba(0,0,0,1)]'
+  // const deskLinks: string = 'hidden lg:w-[50vw] lg:max-w-fit lg:h-fit lg:flex lg:justify-evenly lg:pr-4 lg:text-xl text-bill-magenta drop-shadow-[-2px_2px_0_rgba(0,0,0,1)]'
 
   const deskLinkStyle: string = "mx-6 transition ease-in-out hover:text-bill-yellow"
 
-  const mobLinks: string = 'lg:hidden flex flex-col text-xl py-4 text-bill-magenta drop-shadow-[-2px_2px_0_rgba(0,0,0,1)]'
+  // const mobLinks: string = 'lg:hidden flex flex-col text-xl py-4 text-bill-magenta drop-shadow-[-2px_2px_0_rgba(0,0,0,1)]'
   
   const [navState,setNavState] = useState(hiddenLinks)
 
@@ -23,6 +37,8 @@ function App() {
   const toggle = () => {
     navState === hiddenLinks ? setNavState(shownLinks) : setNavState(hiddenLinks)
   }
+
+  
 
   return (
     
@@ -54,12 +70,12 @@ function App() {
         
         
               <div className='lg:hidden flex flex-col text-xl py-4 text-bill-magenta drop-shadow-[-2px_2px_0_rgba(0,0,0,1)]'>
-                <div className='mx-6 my-1'>Home</div>
-                <div className='mx-6 my-1'>Store</div>
+                <NavLink to={"/"} className='mx-6 my-1'>Home</NavLink>
+                <NavLink to={"/store"} className='mx-6 my-1'>Store</NavLink>
                 <div className='mx-6 my-1'>Services</div>
-                <div className='mx-6 my-1'>About</div>
+                <NavLink to={"/about"} className='mx-6 my-1'>About</NavLink>
                 <div className='mx-6 my-1'>Contact</div>
-                <div className='mx-6 my-1'>Sign Up</div>
+                <div className='mx-6 my-1'>Log In</div>
               </div>
         
             </div>
@@ -68,21 +84,25 @@ function App() {
         
           {/* desktop view */}
         
-          <div className='hidden lg:w-[50vw] lg:max-w-fit lg:h-fit lg:flex lg:justify-evenly lg:pr-4 lg:text-xl text-bill-magenta drop-shadow-[-2px_2px_0_rgba(0,0,0,1)]'>
-            <div className={deskLinkStyle}>Home</div>
-            <div className={deskLinkStyle}>Store</div>
+          <div className='hidden lg:w-[60vw] lg:max-w-fit lg:h-fit lg:flex lg:flex-wrap lg:justify-evenly lg:pr-4 lg:text-xl text-bill-magenta drop-shadow-[-2px_2px_0_rgba(0,0,0,1)]'>
+            <NavLink to={"/"} className={deskLinkStyle}>Home</NavLink>
+            <NavLink to={"/store"} className={deskLinkStyle}>Store</NavLink>
             <div className={deskLinkStyle}>Services</div>
-            <div className={deskLinkStyle}>About</div>
+            <NavLink to={"/about"} className={deskLinkStyle}>About</NavLink>
             <div className={deskLinkStyle}>Contact</div>
-            <div className={deskLinkStyle}>Sign Up</div>
+            <div className={deskLinkStyle}>Log In</div>
           </div>
           
         </div>
 
-        <Radio></Radio>
+        <Radio radioUnlocked={radioUnlocked} setRadioUnlocked={setRadioUnlocked}></Radio>
         
-        <div id='routing'>
-
+        <div id='routing' className='pt-36 lg:pt-20 min-h-screen flex justify-center min-w-fit'>
+          <Routes>
+            <Route path='/' element={<Home/>}/>
+            <Route path='/store' element={<Store/>} />
+            <Route path='/about' element={<About/>} />
+          </Routes>
         </div>
       </>
   

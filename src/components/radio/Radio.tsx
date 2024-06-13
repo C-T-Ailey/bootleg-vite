@@ -1,9 +1,14 @@
 import './radio.css'
-import { useState, useEffect, useLayoutEffect, MouseEvent } from 'react'
+import React, { useState, useEffect, useLayoutEffect, MouseEvent } from 'react'
 import './radio.css'
 
-export default function page() {
-    
+interface RadioProps {
+    radioUnlocked: boolean;
+    setRadioUnlocked: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
+export default function page({radioUnlocked, setRadioUnlocked}:RadioProps) {
+
     const audioLibrary = [
         {
             title: 'Tony Hawk\'s Pro Skater OST: "Main Menu Loop"',
@@ -225,37 +230,38 @@ export default function page() {
     }
 
     const handlePlay = async (element: HTMLMediaElement) => {
-        if(!!audioCanPlay){
-            setFirstPlay(true)
-            const click = new Audio('/audio/tape_click.ogg');
-            try {
-                if(!playing){
-                    
-                    let players = getRadios();
-                    
-                    setPlaying(true);
+        if(!!radioUnlocked){
+            if(!!audioCanPlay){
+                setFirstPlay(true)
+                const click = new Audio('./src/assets/audio/tape_click.ogg');
+                try {
+                    let hiss = getRadios().hiss;
 
-                    click.play();
-                    
-                    players.hiss.play();
-                    
-                    if (!firstPlay) {
-                        var timeout = setTimeout(()=>{players.audio.play();},1000)
+                    if(!playing){
+                                            
+                        setPlaying(true);
+
+                        click.play();
+                        
+                        hiss.play();
+                        
+                        if (!firstPlay) {
+                            var timeout = setTimeout(()=>{element.play();},1000)
+                        } else {
+                            element.play()
+                        }
+                        
+                        return () => clearTimeout(timeout);
+                        
                     } else {
-                        players.audio.play()
+                        element.pause();
+                        hiss.pause();
+                        setPlaying(false)
                     }
-                    
-                    return () => clearTimeout(timeout);
-                    
-                } else {
-                    let players = getRadios();
-                    players.audio.pause();
-                    players.hiss.pause();
-                    setPlaying(false)
                 }
-            }
-            catch (err) {
-                console.log(err)
+                catch (err) {
+                    console.log(err)
+                }
             }
         }
     }
@@ -302,24 +308,24 @@ export default function page() {
         setTapeArt(!tapeArt)
     }
 
-    const handleMute = (element: HTMLMediaElement) => {
-        console.log(element.muted)
-        element.muted = !element.muted
-        setAudioMuted(element.muted)
-    }
+    // const handleMute = (element: HTMLMediaElement) => {
+    //     console.log(element.muted)
+    //     element.muted = !element.muted
+    //     setAudioMuted(element.muted)
+    // }
 
     const handleTop = () => {
         if (!!tapeArt){
-            return 'top-[27.4rem]'
+            return (radioUnlocked ? 'top-[27.4rem]': 'top-[5rem]' )
         }
         else if (!!expanded) {
             return 'top-[5rem]'
         }
         else if (!!visible) {
-            return 'top-[-10.2rem]'
+            return (radioUnlocked ? 'top-[-10.2rem]': 'top-[-19.4rem]' ) 
         }
         else if (!visible) {
-            return 'top-[-13.7rem]'
+            return (radioUnlocked ? 'top-[-13.7rem]': 'top-[-22.9rem]' )
         }
     }
 
@@ -330,11 +336,11 @@ export default function page() {
         <audio id="audioPlayer" autoPlay={false} src={currentSrc} onCanPlay={() => setAudioCanPlay(true)} onEnded={() => nextTrack()}/>
 
         <div className='w-full h-fit relative bg-slate-200' onClick={(()=>toggleTape())}>
-            <img className={`absolute object-contain z-50 ${!!tapeArt ? "top-[-22.4rem]" : "top-[-37.6rem]"} transition-top ease-in-out ${!!tapeArt ? "duration-700" : 'duration-[900ms]'}`} src={'./src/assets/images/radio_404_album.jpg'} alt='cover art' width={384} height={601}/>
+            <img className={`absolute object-contain z-50 ${!!tapeArt ? "top-[-22.4rem]" : "top-[-37.6rem]"} transition-top ease-in-out ${!!tapeArt ? "duration-700" : 'duration-[900ms]'}`} src={radioUnlocked ? './src/assets/images/radio_404_album_upd.jpg' : ''} alt='cover art' width={384} height={601}/>
         </div>
 
         <div className={`w-full h-fit relative bg-slate-200`} onClick={()=>toggleTape()}>
-            <img className='object-contain z-40' src={'./src/assets/images/radio_404_tape.png'} alt='current track album art' width={384} height={243}/>
+            <img className='object-contain z-40' src={ radioUnlocked ? './src/assets/images/radio_404_tape.png' : './src/assets/images/lost_note.png'} alt='current track album art' width={384} height={243}/>
         </div>
         
         <div className={`flex flex-row items-center justify-around h-14 w-96 bg-white rounded-br-lg shadow-[-2px_2px_6px_rgb(36,36,36)]`}>
@@ -347,13 +353,13 @@ export default function page() {
 
                 <ul id="radioMarquee" className='marquee__content' style={{animationDuration: `${marqueeScrollDuration}s`}}>
                     <li>
-                        <p>{ !audioCanPlay ? "Looking for the tape..." : audioLibrary[selectedTrack].title}</p>
+                        <p>{ !radioUnlocked || !audioCanPlay ? "Looking for the tape..." : audioLibrary[selectedTrack].title}</p>
                     </li>
                     <li className='text-3xl'>
                         <i className="bi bi-cassette-fill text-bill-magenta drop-shadow-bill-black-flat"></i>
                     </li>
                     <li>
-                        <p>{ !audioCanPlay ? "Looking for the tape..." : audioLibrary[selectedTrack].artist}</p>
+                        <p>{ !radioUnlocked || !audioCanPlay ? "Looking for the tape..." : audioLibrary[selectedTrack].artist}</p>
                     </li>
                     <li className='text-3xl'>
                         <i className="bi bi-cassette-fill text-bill-magenta drop-shadow-bill-black-flat"></i>
@@ -362,13 +368,13 @@ export default function page() {
 
                 <ul id='hiddenMarquee' aria-hidden='true' className='marquee__content' style={{animationDuration: `${marqueeScrollDuration}s`}}>
                     <li>
-                        <p>{ !audioCanPlay ? "Looking for the tape..." : audioLibrary[selectedTrack].title}</p>
+                        <p>{ !radioUnlocked || !audioCanPlay ? "Looking for the tape..." : audioLibrary[selectedTrack].title}</p>
                     </li>
                     <li className='text-3xl'>
                         <i className="bi bi-cassette-fill text-bill-magenta drop-shadow-bill-black-flat"></i>
                     </li>
                     <li>
-                        <p>{ !audioCanPlay ? "Looking for the tape..." : audioLibrary[selectedTrack].artist}</p>
+                        <p>{ !radioUnlocked || !audioCanPlay ? "Looking for the tape..." : audioLibrary[selectedTrack].artist}</p>
                     </li>
                     <li className='text-3xl'>
                         <i className="bi bi-cassette-fill text-bill-magenta drop-shadow-bill-black-flat"></i>
@@ -395,7 +401,7 @@ export default function page() {
 
             <div className='relative w-32 flex justify-around items-center pl-3 pt-1 select-none'>
                 <div id="volDown" className='w-6 text-center text-2xl hover:text-bill-magenta hover:drop-shadow-[-2px_2px_0_rgba(0,0,0,1)] cursor-pointer' onClick={(event) => handleVolume(event)}>-</div>
-                <div className={`hairline w-6 text-center font-bold text-xl`}>{volume}</div>
+                <div className={`hairline w-6 text-center font-bold text-xl pt-2`}>{volume}</div>
                 <div id="volUp" className='w-6 text-center text-2xl hover:text-bill-magenta hover:drop-shadow-[-2px_2px_0_rgba(0,0,0,1)] cursor-pointer' onClick={(event) => handleVolume(event)}>+</div>
             </div>
         </div>
