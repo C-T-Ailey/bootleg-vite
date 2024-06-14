@@ -9,3 +9,31 @@
 .marker {
   font-family: "Permanent Marker", sans-serif;
 }
+
+.marquee {
+  --gap: 1rem;
+  position: relative;
+  display: flex;
+  overflow: hidden;
+  user-select: none;
+  gap: var(--gap);
+}
+
+.marquee__content {
+  font-weight: bolder;
+  animation: scroll 10s linear infinite;
+  flex-shrink: 0;
+  display: flex;
+  justify-content: left;
+  gap: var(--gap);
+  min-width: 100%;
+}
+
+@keyframes scroll {
+  0% {
+      transform: translate(0);
+  }
+  100% {
+      transform: translateX(calc(-100% - var(--gap)));
+  }
+}

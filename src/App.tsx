@@ -19,7 +19,7 @@ import About from './pages/about/About'
 
 function App() {
 
-  const [radioUnlocked,setRadioUnlocked] = useState<boolean>(true)
+  const [radioUnlocked,setRadioUnlocked] = useState<boolean>(false)
 
   const hiddenLinks: string = "h-16"
 

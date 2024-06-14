@@ -1,6 +1,6 @@
 import './radio.css'
 import React, { useState, useEffect, useLayoutEffect, MouseEvent } from 'react'
-import './radio.css'
+// import './radio.css'
 
 interface RadioProps {
     radioUnlocked: boolean;
@@ -138,6 +138,10 @@ export default function page({radioUnlocked, setRadioUnlocked}:RadioProps) {
 
     const [currentSrc, setCurrentSrc] = useState<string>("")
 
+    const [releaseClicks,setReleaseClicks] = useState<number>(0)
+
+    const [tapeDrop, setTapeDrop] = useState(false)
+
     const getRadios = () => {
         let audio = document.getElementById("audioPlayer") as HTMLMediaElement;
         let hiss = document.getElementById("hiss") as HTMLMediaElement;
@@ -147,6 +151,12 @@ export default function page({radioUnlocked, setRadioUnlocked}:RadioProps) {
         }
         return players
     }
+
+    useEffect(()=>{
+        if (releaseClicks === 10) {
+            setTapeDrop(true)
+        }
+    },[releaseClicks])
     
     useLayoutEffect(() => {
         shufflePlaylist();
@@ -330,7 +340,7 @@ export default function page({radioUnlocked, setRadioUnlocked}:RadioProps) {
     }
 
     return (
-    <div id='radio' className={`hidden absolute lg:flex fixed ${ handleTop() } w-96 h-fit flex-col items-center transition-top ease-in-out duration-700`}>
+    <div id='radio' className={`hidden lg:flex fixed ${ handleTop() } w-96 h-fit flex-col items-center transition-top ease-in-out duration-700`}>
 
         <audio id="hiss" autoPlay={false} src='./src/assets/audio/tapehiss.wav' loop/>
         <audio id="audioPlayer" autoPlay={false} src={currentSrc} onCanPlay={() => setAudioCanPlay(true)} onEnded={() => nextTrack()}/>
