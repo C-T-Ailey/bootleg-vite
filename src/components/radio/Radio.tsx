@@ -140,7 +140,9 @@ export default function page({radioUnlocked, setRadioUnlocked}:RadioProps) {
 
     const [releaseClicks,setReleaseClicks] = useState<number>(0)
 
-    const [tapeDrop, setTapeDrop] = useState(false)
+    const [peekClick, setPeekClick] = useState<boolean>(false)
+
+    const [tapeDrop, setTapeDrop] = useState<boolean>(false)
 
     const getRadios = () => {
         let audio = document.getElementById("audioPlayer") as HTMLMediaElement;
@@ -151,12 +153,6 @@ export default function page({radioUnlocked, setRadioUnlocked}:RadioProps) {
         }
         return players
     }
-
-    useEffect(()=>{
-        if (releaseClicks === 10) {
-            setTapeDrop(true)
-        }
-    },[releaseClicks])
     
     useLayoutEffect(() => {
         shufflePlaylist();
@@ -164,7 +160,14 @@ export default function page({radioUnlocked, setRadioUnlocked}:RadioProps) {
         getRadios().hiss.volume = volume / 10;
     }, [])
 
-    useEffect(()=>{        
+    useEffect(()=>{
+        if(!!peekClick){
+            setTimeout(() => {
+                setPeekClick(false);
+            }, 450);}
+    },[peekClick])
+
+    useEffect(()=>{
         console.log("current track:",audioLibrary[selectedTrack].title,"library track index:",selectedTrack)
         console.log(playlist.length - 1)
         console.log("Next track is end of playlist:", playlist.indexOf(selectedTrack) + 1 === playlist.length - 1)
@@ -186,8 +189,10 @@ export default function page({radioUnlocked, setRadioUnlocked}:RadioProps) {
     useEffect(()=>{
         if (!!audioCanPlay){
             setMarqueeScrollDuration(calcScrollDuration());
-    }
-    },[audioCanPlay, selectedTrack])
+        }
+    },[audioCanPlay, selectedTrack, radioUnlocked])
+
+    
 
     // calculates the duration of the marquee scrolling animation - produces a consistent perceived scroll rate for all tracks regardless of the text length
     const calcScrollDuration = () => {
@@ -308,15 +313,58 @@ export default function page({radioUnlocked, setRadioUnlocked}:RadioProps) {
     
     const expand = () => {
         setExpanded(!expanded)
-
+        
         if (!!tapeArt) {
             setTapeArt(false)
         }
     }
     
     const toggleTape = () => {
-        setTapeArt(!tapeArt)
+        setTapeArt(!tapeArt);
     }
+    
+    const tapeDropCheck = () => {
+        // if (releaseClicks < 3) {
+        //     setPeekClick(true);
+        //     console.log(releaseClicks)
+        //     setReleaseClicks(releaseClicks + 1)
+        // } 
+        // else if (!tapeDrop) {
+        //     setTapeDrop(true)
+        // } 
+        // else if (!radioUnlocked) {
+        //     setExpanded(false);
+        //     setVisible(false);
+        //     localStorage.setItem("radioUnlocked", "true")
+        //     setTimeout(() => {
+        //         setRadioUnlocked(true);
+        //     }, 700);
+        // }
+        // else {
+        //     toggleTape()
+        // }
+
+        if (!!radioUnlocked) {
+            toggleTape()
+        } 
+        else if (releaseClicks < 3) {
+            setPeekClick(true);
+            console.log(releaseClicks)
+            setReleaseClicks(releaseClicks + 1)
+        }
+        else if (!tapeDrop) {
+            setTapeDrop(true)
+        } 
+        else if (!radioUnlocked) {
+            setExpanded(false);
+            setVisible(false);
+            localStorage.setItem("radioUnlocked", "true")
+            setTimeout(() => {
+                setRadioUnlocked(true);
+            }, 700);
+        }
+    }
+
 
     // const handleMute = (element: HTMLMediaElement) => {
     //     console.log(element.muted)
@@ -326,16 +374,16 @@ export default function page({radioUnlocked, setRadioUnlocked}:RadioProps) {
 
     const handleTop = () => {
         if (!!tapeArt){
-            return (radioUnlocked ? 'top-[27.4rem]': 'top-[5rem]' )
+            return (!!radioUnlocked ? 'top-[27.4rem]': 'top-[5rem]' )
         }
         else if (!!expanded) {
             return 'top-[5rem]'
         }
         else if (!!visible) {
-            return (radioUnlocked ? 'top-[-10.2rem]': 'top-[-19.4rem]' ) 
+            return ('top-[-10.2rem]') 
         }
         else if (!visible) {
-            return (radioUnlocked ? 'top-[-13.7rem]': 'top-[-22.9rem]' )
+            return ('top-[-13.7rem]')
         }
     }
 
@@ -349,8 +397,11 @@ export default function page({radioUnlocked, setRadioUnlocked}:RadioProps) {
             <img className={`absolute object-contain z-50 ${!!tapeArt ? "top-[-22.4rem]" : "top-[-37.6rem]"} transition-top ease-in-out ${!!tapeArt ? "duration-700" : 'duration-[900ms]'}`} src={radioUnlocked ? './src/assets/images/radio_404_album_upd.jpg' : ''} alt='cover art' width={384} height={601}/>
         </div>
 
-        <div className={`w-full h-fit relative bg-slate-200`} onClick={()=>toggleTape()}>
-            <img className='object-contain z-40' src={ radioUnlocked ? './src/assets/images/radio_404_tape.png' : './src/assets/images/lost_note.png'} alt='current track album art' width={384} height={243}/>
+        <div className={`w-full h-fit relative bg-slate-200`} onClick={()=>tapeDropCheck()}>
+            <div className={`${!!localStorage.getItem("radioUnlocked") ? 'hidden' : ''} h-fit w-fit fixed left-52 top-[-3rem] z-50 tape ${!!peekClick ? 'tape-peek' : (!!tapeDrop ? 'tape-drop' : '')}`}>
+                <img className='h-[75%] w-[75%] shadow-[2px_2px_5px_rgba(0,0,0,0.7)]' src='./src/assets/images/radio_404_mini.jpg' alt='mini tape'/>
+            </div>
+            <img className='object-contain z-40' src={ !!radioUnlocked ? './src/assets/images/radio_404_tape.png' : './src/assets/images/lost_note.png'} alt='current track album art' width={384} height={243}/>
         </div>
         
         <div className={`flex flex-row items-center justify-around h-14 w-96 bg-white rounded-br-lg shadow-[-2px_2px_6px_rgb(36,36,36)]`}>

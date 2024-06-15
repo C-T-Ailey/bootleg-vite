@@ -1,5 +1,5 @@
 // hooks
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 
 // css imports
 import 'bootstrap-icons/font/bootstrap-icons.css'
@@ -18,6 +18,14 @@ import Store from './pages/store/Store'
 import About from './pages/about/About'
 
 function App() {
+
+  useEffect(() => {
+    if (!!localStorage.getItem("radioUnlocked")){
+      setRadioUnlocked(true)
+    }
+    
+  }, [])
+  
 
   const [radioUnlocked,setRadioUnlocked] = useState<boolean>(false)
 
@@ -70,12 +78,12 @@ function App() {
         
         
               <div className='lg:hidden flex flex-col text-xl py-4 text-bill-magenta drop-shadow-[-2px_2px_0_rgba(0,0,0,1)]'>
-                <NavLink to={"/"} className='mx-6 my-1'>Home</NavLink>
-                <NavLink to={"/store"} className='mx-6 my-1'>Store</NavLink>
-                <div className='mx-6 my-1'>Services</div>
-                <NavLink to={"/about"} className='mx-6 my-1'>About</NavLink>
-                <div className='mx-6 my-1'>Contact</div>
-                <div className='mx-6 my-1'>Log In</div>
+                <NavLink to={"/"} className='mx-6 my-1' onClick={()=>toggle()}>Home</NavLink>
+                <NavLink to={"/store"} className='mx-6 my-1' onClick={()=>toggle()}>Store</NavLink>
+                <div className='mx-6 my-1' onClick={()=>toggle()}>Services</div>
+                <NavLink to={"/about"} className='mx-6 my-1' onClick={()=>toggle()}>About</NavLink>
+                <div className='mx-6 my-1' onClick={()=>toggle()}>Contact</div>
+                <div className='mx-6 my-1' onClick={()=>toggle()}>Log In</div>
               </div>
         
             </div>

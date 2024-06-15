@@ -25,3 +25,38 @@
         transform: translateX(calc(-100% - var(--gap)));
     }
 }
+
+.tape {
+    transform: rotate(-60deg)
+}
+
+.tape-peek {
+    animation: peek 0.4s linear;
+}
+
+@keyframes peek {
+    0%{
+
+    }
+    40%{
+        top: -1.6rem
+    }
+    100%{
+
+    }
+}
+
+.tape-drop {
+    animation: drop 0.4s ease-in-out forwards;
+}
+
+@keyframes drop {
+    0%{
+
+    }
+    
+    100%{
+        top: 15rem;
+        transform: rotate(100deg)
+    }
+}
