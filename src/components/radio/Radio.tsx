@@ -1,5 +1,23 @@
 import './radio.css'
 import React, { useState, useEffect, useLayoutEffect, MouseEvent } from 'react'
+const radioCase: string = './src/assets/images/radio_404_album_upd.jpg'
+const radioTape: string = './src/assets/images/radio_404_tape.png'
+const striderCase: string = '/src/assets/images/sample/strider.jpg'
+const striderTape: string = '/src/assets/images/sample/strider_tape.jpg'
+const lsdCase: string = '/src/assets/images/sample/lsd.jpg'
+const lsdTape: string = '/src/assets/images/sample/lsd_tape.jpg'
+const lebowskiCase: string = '/src/assets/images/sample/lebowski.jpg'
+const lebowskiTape: string = '/src/assets/images/sample/lebowski_tape.jpg'
+const sanicCase: string = '/src/assets/images/sample/sanic.jpg'
+const sanicTape: string = '/src/assets/images/sample/sanic_tape.jpg'
+const sh1Case: string = '/src/assets/images/sample/sh1.jpg'
+const sh1Tape: string = '/src/assets/images/sample/sh1_tape.jpg'
+const sh2Case: string = '/src/assets/images/sample/sh2.jpg'
+const sh2Tape: string = '/src/assets/images/sample/sh2_tape.jpg'
+const sh3Case: string = '/src/assets/images/sample/sh3.jpg'
+const sh3Tape: string = '/src/assets/images/sample/sh3_tape.jpg'
+const truthCase: string = '/src/assets/images/sample/truth.jpg'
+const truthTape: string = '/src/assets/images/sample/truth_tape.jpg'
 // import './radio.css'
 
 interface RadioProps {
@@ -13,7 +31,8 @@ export default function page({radioUnlocked, setRadioUnlocked}:RadioProps) {
         {
             title: 'Tony Hawk\'s Pro Skater OST: "Main Menu Loop"',
             artist: 'Brian Bright',
-            url: "https://od.lk/s/OTFfMjgxMzAyMjFf/thps_loop_neater.mp3"
+            url: "https://od.lk/s/OTFfMjgxMzAyMjFf/thps_loop_neater.mp3",
+            loop: true
         },
         {
             title:'"Oblivion (Double Bill Mix)"',
@@ -23,7 +42,8 @@ export default function page({radioUnlocked, setRadioUnlocked}:RadioProps) {
         {
             title: 'Tony Hawk\'s Pro Skater 2 OST: "Main Menu Loop"',
             artist: 'Brian Bright',
-            url: "https://od.lk/s/OTFfMjgxMzA1OTdf/Brian%20Bright%20-%20THPS%202%20Menu%20Music.mp3"
+            url: "https://od.lk/s/OTFfMjgxMzA1OTdf/Brian%20Bright%20-%20THPS%202%20Menu%20Music.mp3",
+            loop: true
         },
         {
             title: '"Midnight Specimen"',
@@ -168,9 +188,9 @@ export default function page({radioUnlocked, setRadioUnlocked}:RadioProps) {
     },[peekClick])
 
     useEffect(()=>{
-        console.log("current track:",audioLibrary[selectedTrack].title,"library track index:",selectedTrack)
-        console.log(playlist.length - 1)
-        console.log("Next track is end of playlist:", playlist.indexOf(selectedTrack) + 1 === playlist.length - 1)
+        // console.log("current track:",audioLibrary[selectedTrack].title,"library track index:",selectedTrack)
+        // console.log(playlist.length - 1)
+        // console.log("Next track is end of playlist:", playlist.indexOf(selectedTrack) + 1 === playlist.length - 1)
         if(!!firstPlay){
             let players = getRadios();
             if(!!playing){
@@ -189,6 +209,7 @@ export default function page({radioUnlocked, setRadioUnlocked}:RadioProps) {
     useEffect(()=>{
         if (!!audioCanPlay){
             setMarqueeScrollDuration(calcScrollDuration());
+            // console.log(!!audioLibrary[selectedTrack].loop)
         }
     },[audioCanPlay, selectedTrack, radioUnlocked])
 
@@ -283,7 +304,7 @@ export default function page({radioUnlocked, setRadioUnlocked}:RadioProps) {
     
     const handleVolume = (event: MouseEvent<HTMLDivElement>) => {
         const element = event.target as HTMLDivElement
-        console.log(element)
+        // console.log(element)
         let players = getRadios();
         if (element.id === "volUp" && volume < 10) {
             players.audio.volume = (volume + 1) / 10;
@@ -349,7 +370,7 @@ export default function page({radioUnlocked, setRadioUnlocked}:RadioProps) {
         } 
         else if (releaseClicks < 3) {
             setPeekClick(true);
-            console.log(releaseClicks)
+            // console.log(releaseClicks)
             setReleaseClicks(releaseClicks + 1)
         }
         else if (!tapeDrop) {
@@ -388,20 +409,20 @@ export default function page({radioUnlocked, setRadioUnlocked}:RadioProps) {
     }
 
     return (
-    <div id='radio' className={`hidden lg:flex fixed ${ handleTop() } w-96 h-fit flex-col items-center transition-top ease-in-out duration-700`}>
+    <div id='radio' className={`hidden lg:flex fixed ${ handleTop() } w-96 h-fit flex-col items-center transition-top ease-in-out duration-700 z-50`}>
 
         <audio id="hiss" autoPlay={false} src='./src/assets/audio/tapehiss.wav' loop/>
-        <audio id="audioPlayer" autoPlay={false} src={currentSrc} onCanPlay={() => setAudioCanPlay(true)} onEnded={() => nextTrack()}/>
+        <audio id="audioPlayer" autoPlay={false} src={currentSrc} onCanPlay={() => setAudioCanPlay(true)} onEnded={() => nextTrack()} loop={!!audioLibrary[selectedTrack].loop}/>
 
         <div className='w-full h-fit relative bg-slate-200' onClick={(()=>toggleTape())}>
-            <img className={`absolute object-contain z-50 ${!!tapeArt ? "top-[-22.4rem]" : "top-[-37.6rem]"} transition-top ease-in-out ${!!tapeArt ? "duration-700" : 'duration-[900ms]'}`} src={radioUnlocked ? './src/assets/images/radio_404_album_upd.jpg' : ''} alt='cover art' width={384} height={601}/>
+            <img className={`absolute object-contain z-50 ${!!tapeArt ? "top-[-22.4rem]" : "top-[-37.6rem]"} transition-top ease-in-out ${!!tapeArt ? "duration-700" : 'duration-[900ms]'}`} src={radioUnlocked ? radioCase : ''} alt='cover art' width={384} height={601}/>
         </div>
 
         <div className={`w-full h-fit relative bg-slate-200`} onClick={()=>tapeDropCheck()}>
             <div className={`${!!localStorage.getItem("radioUnlocked") ? 'hidden' : ''} h-fit w-fit fixed left-52 top-[-3rem] z-50 tape ${!!peekClick ? 'tape-peek' : (!!tapeDrop ? 'tape-drop' : '')}`}>
                 <img className='h-[75%] w-[75%] shadow-[2px_2px_5px_rgba(0,0,0,0.7)]' src='./src/assets/images/radio_404_mini.jpg' alt='mini tape'/>
             </div>
-            <img className='object-contain z-40' src={ !!radioUnlocked ? './src/assets/images/radio_404_tape.png' : './src/assets/images/lost_note.png'} alt='current track album art' width={384} height={243}/>
+            <img className='object-contain z-40' src={ !!radioUnlocked ? radioTape : './src/assets/images/lost_note.png'} alt='current track album art' width={384} height={243}/>
         </div>
         
         <div className={`flex flex-row items-center justify-around h-14 w-96 bg-white rounded-br-lg shadow-[-2px_2px_6px_rgb(36,36,36)]`}>
@@ -417,13 +438,21 @@ export default function page({radioUnlocked, setRadioUnlocked}:RadioProps) {
                         <p>{ !radioUnlocked || !audioCanPlay ? "Looking for the tape..." : audioLibrary[selectedTrack].title}</p>
                     </li>
                     <li className='text-3xl'>
+                        {!!audioLibrary[selectedTrack].loop ? 
+                        <i className="bi bi-repeat text-bill-magenta drop-shadow-bill-black-flat"></i> 
+                        : 
                         <i className="bi bi-cassette-fill text-bill-magenta drop-shadow-bill-black-flat"></i>
+                        }
                     </li>
                     <li>
                         <p>{ !radioUnlocked || !audioCanPlay ? "Looking for the tape..." : audioLibrary[selectedTrack].artist}</p>
                     </li>
                     <li className='text-3xl'>
+                        {!!audioLibrary[selectedTrack].loop ? 
+                        <i className="bi bi-repeat text-bill-magenta drop-shadow-bill-black-flat"></i> 
+                        : 
                         <i className="bi bi-cassette-fill text-bill-magenta drop-shadow-bill-black-flat"></i>
+                        }
                     </li>
                 </ul>
 
@@ -432,13 +461,21 @@ export default function page({radioUnlocked, setRadioUnlocked}:RadioProps) {
                         <p>{ !radioUnlocked || !audioCanPlay ? "Looking for the tape..." : audioLibrary[selectedTrack].title}</p>
                     </li>
                     <li className='text-3xl'>
+                        {!!audioLibrary[selectedTrack].loop ? 
+                        <i className="bi bi-repeat text-bill-magenta drop-shadow-bill-black-flat"></i> 
+                        : 
                         <i className="bi bi-cassette-fill text-bill-magenta drop-shadow-bill-black-flat"></i>
+                        }
                     </li>
                     <li>
                         <p>{ !radioUnlocked || !audioCanPlay ? "Looking for the tape..." : audioLibrary[selectedTrack].artist}</p>
                     </li>
                     <li className='text-3xl'>
+                        {!!audioLibrary[selectedTrack].loop ? 
+                        <i className="bi bi-repeat text-bill-magenta drop-shadow-bill-black-flat"></i> 
+                        : 
                         <i className="bi bi-cassette-fill text-bill-magenta drop-shadow-bill-black-flat"></i>
+                        }
                     </li>
                 </ul>
 
@@ -460,9 +497,9 @@ export default function page({radioUnlocked, setRadioUnlocked}:RadioProps) {
 
             <div className='relative w-24 rounded-b bg-white shadow-[-2px_2px_4px_rgb(36,36,36)] flex justify-center items-center' onClick={() => toggle()}><i className={`bi ${!visible ? `bi-chevron-compact-down` : `bi-chevron-compact-up`} text-2xl`}></i></div>
 
-            <div className='relative w-32 flex justify-around items-center pl-3 pt-1 select-none'>
+            <div className='relative bungee h-6 w-32 flex justify-around items-center pl-3 pt-1 select-none overflow-hidden'>
                 <div id="volDown" className='w-6 text-center text-2xl hover:text-bill-magenta hover:drop-shadow-[-2px_2px_0_rgba(0,0,0,1)] cursor-pointer' onClick={(event) => handleVolume(event)}>-</div>
-                <div className={`hairline w-6 text-center font-bold text-xl pt-2`}>{volume}</div>
+                <div className={`hairline w-6 text-center font-bold text-xl`}>{volume}</div>
                 <div id="volUp" className='w-6 text-center text-2xl hover:text-bill-magenta hover:drop-shadow-[-2px_2px_0_rgba(0,0,0,1)] cursor-pointer' onClick={(event) => handleVolume(event)}>+</div>
             </div>
         </div>
