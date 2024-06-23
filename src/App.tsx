@@ -1,7 +1,8 @@
 // hooks
 import { useState, useEffect } from 'react'
-
+import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
+import { decode } from 'jwt-js-decode'
 
 // css imports
 import 'bootstrap-icons/font/bootstrap-icons.css'
@@ -23,7 +24,9 @@ import Signup from './pages/auth/Signup'
 
 function App() {
 
-  const [user, setUser] = useState<object>({})
+  const [user, setUser] = useState<string>("none")
+
+  const [navPath, setNavPath] = useState<string>("/")
 
   useEffect(() => {
     if (!!localStorage.getItem("radioUnlocked")){
@@ -31,20 +34,55 @@ function App() {
     };
 
     // getKirk('62e3ab42aa1145047e6c0bab');
-    
+
   }, [])
 
+  useEffect(()=>{
+    console.log(navPath)
+    authenticate()
+  },[navPath])
   
-  const getKirk = async (id: string) => {
-    try {
-      let res = await axios.get(`http://localhost:4000/product/detail?id=${id}`);
-      console.log(res.data.product)
-      console.log("Kirk!")
-    } catch (err) {
-      console.log(err);
-      console.log("Oops! The DB isn't connected.")
+
+  const authenticate = async () => {
+    let token = localStorage.getItem("token");
+    if (!!token) {
+      let now = Math.floor(new Date().getTime() / 1000);
+      let decodeToken = decode(token).payload;
+      const sessionDuration = decodeToken.exp - decodeToken.iat;
+      const lastLogin = Math.floor(decodeToken.user.timestamp);
+      const timeDifference = now - lastLogin;
+      const userStillActive = timeDifference < sessionDuration;
+        // console.log("Authenticated user", userId)
+        // console.log("time between lastLogin and now:", now - lastLogin)
+        // console.log("is this user still valid?", timeDifference < sessionDuration)
+      if (!!userStillActive){
+          let res = await axios.post(`http://localhost:4000/auth/refresh`, {data:token});
+          localStorage.setItem("token", res.data.token);
+          console.log("user session refreshed");
+      }
+      else {
+        localStorage.removeItem("token");
+        setUser("none");
+        console.log("session invalid, cleared token and user")
+      }
     }
-  }  
+  }
+  
+  const clearLogin = () => {
+    localStorage.removeItem("token");
+    setUser("none")
+  }
+
+  // const getKirk = async (id: string) => {
+  //   try {
+  //     let res = await axios.get(`http://localhost:4000/product/detail?id=${id}`);
+  //     console.log(res.data.product)
+  //     console.log("Kirk!")
+  //   } catch (err) {
+  //     console.log(err);
+  //     console.log("Oops! The DB isn't connected.")
+  //   }
+  // }  
   
   const [radioUnlocked,setRadioUnlocked] = useState<boolean>(false)
   
@@ -120,12 +158,21 @@ function App() {
           {/* desktop view */}
         
           <div className='hidden lg:w-[60vw] lg:max-w-fit lg:h-fit lg:flex lg:flex-wrap lg:justify-evenly lg:pr-4 lg:text-xl text-bill-magenta drop-shadow-[-2px_2px_0_rgba(0,0,0,1)]'>
-            <NavLink to={"/"} className={deskLinkStyle}>Home</NavLink>
-            <NavLink to={"/store"} className={deskLinkStyle}>Store</NavLink>
+            <NavLink to={"/"} className={deskLinkStyle} onClick={() => setNavPath("/")}>Home</NavLink>
+            <NavLink to={"/store"} className={deskLinkStyle} onClick={() => setNavPath("/store")}>Store</NavLink>
             <div className={deskLinkStyle}>Services</div>
-            <NavLink to={"/about"} className={deskLinkStyle}>About</NavLink>
+            <NavLink to={"/about"} className={deskLinkStyle} onClick={() => setNavPath("/about")}>About</NavLink>
             <div className={deskLinkStyle}>Contact</div>
-            <NavLink to={"/login"} className={deskLinkStyle}>Log In</NavLink>
+            {user !== "none" ? 
+            <div>{user}</div>
+            :
+            <NavLink to={"/login"} className={deskLinkStyle} onClick={() => setNavPath("/login")}>Log In</NavLink>
+            }
+            {user !== "none" ? 
+            <NavLink to={"/"} className={deskLinkStyle} onClick={() => clearLogin()}>Sign Out</NavLink>
+            :
+            <></>
+            }
           </div>
           
         </div>

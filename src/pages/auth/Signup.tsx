@@ -3,8 +3,8 @@ import axios from "axios";
 import React, { useEffect, useState } from "react"
 
 interface AuthProps {
-  user: object;
-  setUser: React.Dispatch<React.SetStateAction<object>>;
+  user: string;
+  setUser: React.Dispatch<React.SetStateAction<string>>;
 }
 
 interface Users {
@@ -13,7 +13,7 @@ interface Users {
   userType: string;
 }
 
-export default function Signup() {
+export default function Signup({user, setUser}:AuthProps) {
 
   // Users interface is needed here so methods and functions can deconstruct each User in the array
   const [users, setUsers] = useState<Users[]>([])
