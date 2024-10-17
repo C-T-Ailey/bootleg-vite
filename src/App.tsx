@@ -1,6 +1,6 @@
 // hooks
 import { useState, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import axios from 'axios'
 import { decode } from 'jwt-js-decode'
 
@@ -21,8 +21,15 @@ import Store from './pages/store/Store'
 import About from './pages/about/About'
 import Login from './pages/auth/Login'
 import Signup from './pages/auth/Signup'
+import ProductModal from './pages/store/ProductModal'
 
 function App() {
+
+  const location = useLocation();
+
+  const previousLocation = location.state?.previousLocation
+
+  const [modalOpen, setModalOpen] = useState<Boolean>(false)
 
   const [user, setUser] = useState<string>("none")
 
@@ -58,6 +65,7 @@ function App() {
       if (!!userStillActive){
           let res = await axios.post(`http://localhost:4000/auth/refresh`, {data:token});
           localStorage.setItem("token", res.data.token);
+          setUser("yes")
           console.log("user session refreshed");
       }
       else {
@@ -107,7 +115,7 @@ function App() {
     setRadioUnlocked(false)
     localStorage.removeItem('radioUnlocked')
     setTimeout(() => {
-      location.reload()
+      window.location.reload()
     }, 100);
   }
 
@@ -164,7 +172,7 @@ function App() {
             <NavLink to={"/about"} className={deskLinkStyle} onClick={() => setNavPath("/about")}>About</NavLink>
             <div className={deskLinkStyle}>Contact</div>
             {user !== "none" ? 
-            <div>{user}</div>
+            <></>
             :
             <NavLink to={"/login"} className={deskLinkStyle} onClick={() => setNavPath("/login")}>Log In</NavLink>
             }
@@ -180,13 +188,18 @@ function App() {
         <Radio radioUnlocked={radioUnlocked} setRadioUnlocked={setRadioUnlocked}></Radio>
         
         <div id='routing' className='pt-36 lg:pt-20 min-h-screen max-w-screen flex justify-center'>
-          <Routes>
+          <Routes location={previousLocation || location}>
             <Route path='/' element={<Home/>}/>
             <Route path='/store' element={<Store/>} />
             <Route path='/about' element={<About/>} />
             <Route path='/login' element={<Login user={user} setUser={setUser}/>} />
             <Route path='/signup' element={<Signup user={user} setUser={setUser}/>} />
           </Routes>
+          {previousLocation && (
+            <Routes>
+              <Route path='/store/product/:id' element={<ProductModal />} />
+            </Routes>
+          )}
         </div>
       </>
   
