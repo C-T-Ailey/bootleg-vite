@@ -1,0 +1,59 @@
+.bg-fade-in {
+    animation: bgFadeIn 0.5s ease 0s 1 normal forwards;
+  }
+
+@keyframes bgFadeIn {
+	0% {
+		opacity: 0;
+	}
+
+	100% {
+		opacity: 1;
+	}
+}
+
+.bg-fade-out {
+    animation: bgFadeOut 0.5s ease 0s 1 normal forwards;
+  }
+
+@keyframes bgFadeOut {
+	0% {
+		opacity: 1;
+	}
+
+	100% {
+		opacity: 0;
+	}
+}
+
+.modal-fade-in {
+    animation: modalFadeIn 0.5s ease 0s 1 normal forwards;
+  }
+
+@keyframes modalFadeIn {
+	0% {
+		opacity: 0;
+		transform: translateY(-200px);
+	}
+
+	100% {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+.modal-fade-out {
+    animation: modalFadeOut 0.5s ease 0s 1 normal forwards;
+  }
+
+@keyframes modalFadeOut {
+	0% {
+		opacity: 1;
+		transform: translateY(0);
+	}
+
+	100% {
+		opacity: 0;
+		transform: translateY(-200px);
+	}
+}
