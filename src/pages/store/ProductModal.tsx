@@ -1,4 +1,4 @@
-import React, {useEffect, useState, useRef } from 'react'
+import {useEffect, useState, useRef } from 'react'
 import {useParams, useNavigate} from 'react-router-dom'
 import {disableBodyScroll, enableBodyScroll} from 'body-scroll-lock'
 import axios from 'axios'
@@ -20,7 +20,7 @@ export default function ProductModal() {
         productSampleArtist: string,
         hasVariant: boolean,
         productVariants: string[],
-      }
+    }
 
     const [product, setProduct] = useState<Product>()
 

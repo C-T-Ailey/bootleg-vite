@@ -1,6 +1,6 @@
 // imports
 import axios from "axios";
-import React, { useEffect, useLayoutEffect } from "react"
+import React, { useEffect } from "react"
 import { NavLink, useNavigate } from "react-router-dom";
 
 interface AuthProps {

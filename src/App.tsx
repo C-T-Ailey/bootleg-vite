@@ -1,6 +1,6 @@
 // hooks
 import { useState, useEffect } from 'react'
-import { useLocation, useNavigate } from 'react-router-dom'
+import { useLocation } from 'react-router-dom'
 import axios from 'axios'
 import { decode } from 'jwt-js-decode'
 
@@ -28,8 +28,6 @@ function App() {
   const location = useLocation();
 
   const previousLocation = location.state?.previousLocation
-
-  const [modalOpen, setModalOpen] = useState<Boolean>(false)
 
   const [user, setUser] = useState<string>("none")
 
@@ -111,13 +109,13 @@ function App() {
     navState === hiddenLinks ? setNavState(shownLinks) : setNavState(hiddenLinks)
   }
 
-  const resetRadio = () => {
-    setRadioUnlocked(false)
-    localStorage.removeItem('radioUnlocked')
-    setTimeout(() => {
-      window.location.reload()
-    }, 100);
-  }
+  // const resetRadio = () => {
+  //   setRadioUnlocked(false)
+  //   localStorage.removeItem('radioUnlocked')
+  //   setTimeout(() => {
+  //     window.location.reload()
+  //   }, 100);
+  // }
 
   return (
     
