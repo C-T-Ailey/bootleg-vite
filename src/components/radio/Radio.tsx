@@ -2,22 +2,22 @@ import './radio.css'
 import React, { useState, useEffect, useLayoutEffect, MouseEvent } from 'react'
 const radioCase: string = './src/assets/images/radio_404_album_upd.jpg'
 const radioTape: string = './src/assets/images/radio_404_tape.png'
-const striderCase: string = '/src/assets/images/sample/strider.jpg'
-const striderTape: string = '/src/assets/images/sample/strider_tape.jpg'
-const lsdCase: string = '/src/assets/images/sample/lsd.jpg'
-const lsdTape: string = '/src/assets/images/sample/lsd_tape.jpg'
-const lebowskiCase: string = '/src/assets/images/sample/lebowski.jpg'
-const lebowskiTape: string = '/src/assets/images/sample/lebowski_tape.jpg'
-const sanicCase: string = '/src/assets/images/sample/sanic.jpg'
-const sanicTape: string = '/src/assets/images/sample/sanic_tape.jpg'
-const sh1Case: string = '/src/assets/images/sample/sh1.jpg'
-const sh1Tape: string = '/src/assets/images/sample/sh1_tape.jpg'
-const sh2Case: string = '/src/assets/images/sample/sh2.jpg'
-const sh2Tape: string = '/src/assets/images/sample/sh2_tape.jpg'
-const sh3Case: string = '/src/assets/images/sample/sh3.jpg'
-const sh3Tape: string = '/src/assets/images/sample/sh3_tape.jpg'
-const truthCase: string = '/src/assets/images/sample/truth.jpg'
-const truthTape: string = '/src/assets/images/sample/truth_tape.jpg'
+// const striderCase: string = '/src/assets/images/sample/strider.jpg'
+// const striderTape: string = '/src/assets/images/sample/strider_tape.jpg'
+// const lsdCase: string = '/src/assets/images/sample/lsd.jpg'
+// const lsdTape: string = '/src/assets/images/sample/lsd_tape.jpg'
+// const lebowskiCase: string = '/src/assets/images/sample/lebowski.jpg'
+// const lebowskiTape: string = '/src/assets/images/sample/lebowski_tape.jpg'
+// const sanicCase: string = '/src/assets/images/sample/sanic.jpg'
+// const sanicTape: string = '/src/assets/images/sample/sanic_tape.jpg'
+// const sh1Case: string = '/src/assets/images/sample/sh1.jpg'
+// const sh1Tape: string = '/src/assets/images/sample/sh1_tape.jpg'
+// const sh2Case: string = '/src/assets/images/sample/sh2.jpg'
+// const sh2Tape: string = '/src/assets/images/sample/sh2_tape.jpg'
+// const sh3Case: string = '/src/assets/images/sample/sh3.jpg'
+// const sh3Tape: string = '/src/assets/images/sample/sh3_tape.jpg'
+// const truthCase: string = '/src/assets/images/sample/truth.jpg'
+// const truthTape: string = '/src/assets/images/sample/truth_tape.jpg'
 // import './radio.css'
 
 interface RadioProps {
@@ -146,7 +146,7 @@ export default function page({radioUnlocked, setRadioUnlocked}:RadioProps) {
 
     const [selectedTrack, setSelectedTrack] = useState<number>(0)
     
-    const [audioMuted, setAudioMuted] = useState(false)
+    // const [audioMuted, setAudioMuted] = useState(false)
 
     const [volume, setVolume] = useState(5)
     
