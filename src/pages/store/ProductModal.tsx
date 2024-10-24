@@ -35,7 +35,6 @@ export default function ProductModal() {
     const getProduct = async () => {
         try {
           let res = await axios.get(`http://localhost:4000/product/detail?id=${id}`)
-          console.log("product", res.data.product)
           setProduct(res.data.product)
         }
         catch (err) {
