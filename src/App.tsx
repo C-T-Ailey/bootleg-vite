@@ -22,6 +22,8 @@ import About from './pages/about/About'
 import Login from './pages/auth/Login'
 import Signup from './pages/auth/Signup'
 import ProductModal from './pages/store/ProductModal'
+import Dashboard from './components/CRUD/Dashboard'
+import LockedRadio from './components/radio/RadioPuzzle'
 
 function App() {
 
@@ -32,6 +34,8 @@ function App() {
   const [user, setUser] = useState<string>("none")
 
   const [navPath, setNavPath] = useState<string>("/")
+
+  const [viewMode, setViewMode] = useState<string>("light")
 
   useEffect(() => {
     if (!!localStorage.getItem("radioUnlocked")){
@@ -119,7 +123,7 @@ function App() {
 
   return (
     
-      <>
+      <div className={`${viewMode === "light" ? 'bg-white' : 'bg-[#00807F] text-white'} transition-colors ease duration-500`}>
         <div className='bungee w-screen fixed flex flex-col lg:flex-row justify-center items-between lg:justify-between lg:items-center lg:h-20 bg-bill-cyan shadow-md z-[9999]'>
 
           {/* <div className='w-12 h-12 absolute top-[90vh] right-10 bg-bill-magenta rounded-xl flex items-center justify-center text-2xl' onClick={()=>resetRadio()}>X</div> */}
@@ -183,7 +187,19 @@ function App() {
           
         </div>
 
-        <Radio radioUnlocked={radioUnlocked} setRadioUnlocked={setRadioUnlocked}></Radio>
+        {
+          !!radioUnlocked ?
+          <Radio/>
+          :
+          <LockedRadio radioUnlocked={radioUnlocked} setRadioUnlocked={setRadioUnlocked} />
+        }
+        <div className={`hidden lg:flex fixed top-24 right-4 lg:w-16 h-8 border-4 ${ viewMode === "light" ? `border-gray-800` : `border-white` } rounded-full cursor-pointer transition-colors ease duration-500`} onClick={() => setViewMode(viewMode==="light" ? "dark" : 'light')}>
+
+          <div className={`hidden lg:flex relative top-[0.1rem] h-5 w-5 rounded-full transition ease duration-500 ${ viewMode === "light" ? `bg-gray-800 left-[0.1rem]` : `bg-white left-[2.1rem]` }`}>
+
+          </div>
+
+        </div>
         
         <div id='routing' className='pt-36 lg:pt-20 min-h-screen max-w-screen flex justify-center'>
           <Routes location={previousLocation || location}>
@@ -192,6 +208,8 @@ function App() {
             <Route path='/about' element={<About/>} />
             <Route path='/login' element={<Login user={user} setUser={setUser}/>} />
             <Route path='/signup' element={<Signup user={user} setUser={setUser}/>} />
+            <Route path='/account' element={<Dashboard/>}/>
+            <Route path='/store/product/:id' element={<ProductModal />} />
           </Routes>
           {previousLocation && (
             <Routes>
@@ -199,7 +217,7 @@ function App() {
             </Routes>
           )}
         </div>
-      </>
+      </div>
   
   )
 }

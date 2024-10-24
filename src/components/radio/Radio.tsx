@@ -1,3 +1,4 @@
+import TapeSelection from './TapeSelection'
 import './radio.css'
 import React, { useState, useEffect, useLayoutEffect, MouseEvent } from 'react'
 const radioCase: string = './src/assets/images/radio_404_album_upd.jpg'
@@ -18,16 +19,10 @@ const radioTape: string = './src/assets/images/radio_404_tape.png'
 // const sh3Tape: string = '/src/assets/images/sample/sh3_tape.jpg'
 // const truthCase: string = '/src/assets/images/sample/truth.jpg'
 // const truthTape: string = '/src/assets/images/sample/truth_tape.jpg'
-// import './radio.css'
 
-interface RadioProps {
-    radioUnlocked: boolean;
-    setRadioUnlocked: React.Dispatch<React.SetStateAction<boolean>>;
-}
+export default function page() {
 
-export default function page({radioUnlocked, setRadioUnlocked}:RadioProps) {
-
-    const audioLibrary = [
+    const defaultAudioLibrary = JSON.stringify([
         {
             title: 'Tony Hawk\'s Pro Skater OST: "Main Menu Loop"',
             artist: 'Brian Bright',
@@ -132,20 +127,33 @@ export default function page({radioUnlocked, setRadioUnlocked}:RadioProps) {
             artist: 'mtbrd',
             url: 'https://od.lk/s/OTFfMjgxNDk2NDRf/mtbrd%20-%20Damn%20Fine%20Coffee.mp3'
         },
-    ]
+    ])
     
+    const [jsonAudioLibrary, setJsonAudioLibrary] = useState<string>(defaultAudioLibrary)
+
+    const [audioLibrary, setAudioLibrary] = useState(JSON.parse(defaultAudioLibrary))
+
+    const [libraryShuffle, setLibraryShuffle] = useState<boolean>(true)
+
+    const [tapeArt, setTapeArt] = useState<string>(radioTape)
+
+    const [caseArt, setCaseArt] = useState<string>(radioCase)
+
     const [visible, setVisible] = useState(false)
     
-    const [expanded, setExpanded] = useState(false)
+    const [tapeDisplay, setTapeDisplay] = useState(false)
 
-    const [tapeArt, setTapeArt] = useState(false)
+    const [caseDisplay, setCaseDisplay] = useState(false)
     
     const [playing, setPlaying] = useState(false)
     
     const [playlist, setPlaylist] = useState<number[]>([])  // playlist is an array of numbers; each number corresponds to the index of a track object within audioLibrary
 
     const [selectedTrack, setSelectedTrack] = useState<number>(0)
+
+    const [percentElapsed, setPercentElapsed] = useState<number>(0)
     
+    const [loopTrack, setLoopTrack] = useState<boolean>(false)
     // const [audioMuted, setAudioMuted] = useState(false)
 
     const [volume, setVolume] = useState(5)
@@ -158,11 +166,7 @@ export default function page({radioUnlocked, setRadioUnlocked}:RadioProps) {
 
     const [currentSrc, setCurrentSrc] = useState<string>("")
 
-    const [releaseClicks,setReleaseClicks] = useState<number>(0)
-
-    const [peekClick, setPeekClick] = useState<boolean>(false)
-
-    const [tapeDrop, setTapeDrop] = useState<boolean>(false)
+    const [tapeLoaded, setTapeLoaded] = useState<boolean>(true)
 
     const getRadios = () => {
         let audio = document.getElementById("audioPlayer") as HTMLMediaElement;
@@ -179,13 +183,6 @@ export default function page({radioUnlocked, setRadioUnlocked}:RadioProps) {
         getRadios().audio.volume = volume / 10;
         getRadios().hiss.volume = volume / 10;
     }, [])
-
-    useEffect(()=>{
-        if(!!peekClick){
-            setTimeout(() => {
-                setPeekClick(false);
-            }, 450);}
-    },[peekClick])
 
     useEffect(()=>{
         // console.log("current track:",audioLibrary[selectedTrack].title,"library track index:",selectedTrack)
@@ -209,11 +206,24 @@ export default function page({radioUnlocked, setRadioUnlocked}:RadioProps) {
     useEffect(()=>{
         if (!!audioCanPlay){
             setMarqueeScrollDuration(calcScrollDuration());
-            // console.log(!!audioLibrary[selectedTrack].loop)
+            console.log("marquee scroll set")
+            setLoopTrack(audioLibrary[selectedTrack].loop)
         }
-    },[audioCanPlay, selectedTrack, radioUnlocked])
+    },[audioCanPlay, selectedTrack])
 
-    
+    useEffect(()=>{
+        handleNewTape();
+    },[jsonAudioLibrary])
+
+    useEffect(()=>{
+        getRadios().audio.load();
+        if(!!libraryShuffle){
+            shufflePlaylist();
+        }
+        else {
+            straightPlaylist();
+        }
+    },[audioLibrary])
 
     // calculates the duration of the marquee scrolling animation - produces a consistent perceived scroll rate for all tracks regardless of the text length
     const calcScrollDuration = () => {
@@ -221,6 +231,14 @@ export default function page({radioUnlocked, setRadioUnlocked}:RadioProps) {
         let marquee = document.getElementById("radioMarquee") as HTMLDivElement;
         // returns the ceiling of the marquee's width divided by 100, plus 2, to be used as the number of seconds the marquee will take to scroll for a given track
         return Math.ceil(marquee.offsetWidth / 100) + 2
+    }
+
+    const calcSeekWidth = () => {
+        let seekBar = document.getElementById('tracking-bar')!
+        let audioLength = getRadios().audio.duration
+        let audioElapsed = getRadios().audio.currentTime
+        let progress = Math.ceil((audioElapsed / audioLength) * 100)
+        seekBar.style.width = progress + '%'
     }
     
     const randInt = (min: number, max: number) => {
@@ -232,7 +250,7 @@ export default function page({radioUnlocked, setRadioUnlocked}:RadioProps) {
     const shufflePlaylist = () => {
         let libraryIndices: number[] = []
         
-        audioLibrary.forEach(track => {
+        audioLibrary.forEach(() => {
             while (libraryIndices.length !== audioLibrary.length) {
                 let newTrackIndex: number = randInt(0,audioLibrary.length-1);
                 if (!libraryIndices.includes(newTrackIndex)) {
@@ -244,6 +262,18 @@ export default function page({radioUnlocked, setRadioUnlocked}:RadioProps) {
         setPlaylist(libraryIndices);
         setSelectedTrack(libraryIndices[0]);
         setCurrentSrc(audioLibrary[libraryIndices[0]].url)
+    }
+
+    const straightPlaylist = () => {
+        let libraryIndices: number[] = []
+
+        for (let i = 0; i < audioLibrary.length; i++) {
+            libraryIndices.push(i)
+        }
+
+        setPlaylist(libraryIndices);
+        setSelectedTrack(libraryIndices[0]);
+        setCurrentSrc(audioLibrary[libraryIndices[0]].url);
     }
     
     const nextTrack =  () => {
@@ -257,7 +287,12 @@ export default function page({radioUnlocked, setRadioUnlocked}:RadioProps) {
 
         if (atEndOfPlaylist){
             console.log("end of playlist")
-            shufflePlaylist()
+            if(!!libraryShuffle){
+                shufflePlaylist()
+            }
+            else {
+                straightPlaylist()
+            }
         }
         else {
             setSelectedTrack(nextTrack);
@@ -266,7 +301,6 @@ export default function page({radioUnlocked, setRadioUnlocked}:RadioProps) {
     }
 
     const handlePlay = async (element: HTMLMediaElement) => {
-        if(!!radioUnlocked){
             if(!!audioCanPlay){
                 setFirstPlay(true)
                 const click = new Audio('./src/assets/audio/tape_click.ogg');
@@ -290,6 +324,7 @@ export default function page({radioUnlocked, setRadioUnlocked}:RadioProps) {
                         return () => clearTimeout(timeout);
                         
                     } else {
+                        console.log("tape stopped")
                         element.pause();
                         hiss.pause();
                         setPlaying(false)
@@ -299,7 +334,6 @@ export default function page({radioUnlocked, setRadioUnlocked}:RadioProps) {
                     console.log(err)
                 }
             }
-        }
     }
     
     const handleVolume = (event: MouseEvent<HTMLDivElement>) => {
@@ -320,69 +354,48 @@ export default function page({radioUnlocked, setRadioUnlocked}:RadioProps) {
         }
     }
 
+    const handleEject = () => {
+        if(!getRadios().audio.paused){
+            getRadios().audio.pause();
+            getRadios().hiss.pause();
+            setPlaying(false)
+        }
+        let seekBar = document.getElementById('tracking-bar')!;
+        seekBar.style.width = '0%';
+        setCurrentSrc("");
+        setCaseDisplay(false);
+        setTapeLoaded(false);
+        setAudioCanPlay(false);
+    }
+
+    const handleNewTape = () => {
+        setAudioLibrary(JSON.parse(jsonAudioLibrary));
+
+    }
+
     const toggle = () => {
         setVisible(!visible);
 
-        if (!!expanded){
-            setExpanded(false);
+        if (!!tapeDisplay){
+            setTapeDisplay(false);
         };
 
-        if (!!tapeArt) {
-            setTapeArt(false)
+        if (!!caseDisplay) {
+            setCaseDisplay(false)
         }
     }
     
     const expand = () => {
-        setExpanded(!expanded)
+        setTapeDisplay(!tapeDisplay)
         
-        if (!!tapeArt) {
-            setTapeArt(false)
+        if (!!caseDisplay) {
+            setCaseDisplay(false)
         }
     }
     
-    const toggleTape = () => {
-        setTapeArt(!tapeArt);
-    }
-    
-    const tapeDropCheck = () => {
-        // if (releaseClicks < 3) {
-        //     setPeekClick(true);
-        //     console.log(releaseClicks)
-        //     setReleaseClicks(releaseClicks + 1)
-        // } 
-        // else if (!tapeDrop) {
-        //     setTapeDrop(true)
-        // } 
-        // else if (!radioUnlocked) {
-        //     setExpanded(false);
-        //     setVisible(false);
-        //     localStorage.setItem("radioUnlocked", "true")
-        //     setTimeout(() => {
-        //         setRadioUnlocked(true);
-        //     }, 700);
-        // }
-        // else {
-        //     toggleTape()
-        // }
-
-        if (!!radioUnlocked) {
-            toggleTape()
-        } 
-        else if (releaseClicks < 3) {
-            setPeekClick(true);
-            // console.log(releaseClicks)
-            setReleaseClicks(releaseClicks + 1)
-        }
-        else if (!tapeDrop) {
-            setTapeDrop(true)
-        } 
-        else if (!radioUnlocked) {
-            setExpanded(false);
-            setVisible(false);
-            localStorage.setItem("radioUnlocked", "true")
-            setTimeout(() => {
-                setRadioUnlocked(true);
-            }, 700);
+    const toggleCaseDisplay = () => {
+        if(!!tapeLoaded){
+            setCaseDisplay(!caseDisplay);
         }
     }
 
@@ -393,62 +406,81 @@ export default function page({radioUnlocked, setRadioUnlocked}:RadioProps) {
     //     setAudioMuted(element.muted)
     // }
 
-    const handleTop = () => {
-        if (!!tapeArt){
-            return (!!radioUnlocked ? 'top-[27.4rem]': 'top-[5rem]' )
+    const handleTopSpacing = () => {
+        if (!!caseDisplay){
+            return 'top-[27.4rem]'
         }
-        else if (!!expanded) {
+        else if (!!tapeDisplay) {
             return 'top-[5rem]'
         }
         else if (!!visible) {
-            return ('top-[-10.2rem]') 
+            return 'top-[-10.2rem]'
         }
         else if (!visible) {
-            return ('top-[-13.7rem]')
+            return 'top-[-13.7rem]'
         }
     }
 
+    const seek = (e: any) => {
+        let audio = getRadios().audio;
+        const clickVal = e.nativeEvent.offsetX;
+        const totalTime = Math.floor(audio.duration);
+        const seekWidth = e.target.offsetWidth;
+        const clickPercent = Math.floor(clickVal / seekWidth * 100);
+        const clickTime = (totalTime / 100) * clickPercent;
+        audio.currentTime = clickTime;
+        calcSeekWidth();
+    }
+
     return (
-    <div id='radio' className={`hidden lg:flex fixed ${ handleTop() } w-96 h-fit flex-col items-center transition-top ease-in-out duration-700 z-50`}>
+    <div id='radio' className={`hidden lg:flex fixed ${ handleTopSpacing() } w-96 h-fit flex-col items-center transition-top ease-in-out duration-700 z-50`}>
 
         <audio id="hiss" autoPlay={false} src='./src/assets/audio/tapehiss.wav' loop/>
-        <audio id="audioPlayer" autoPlay={false} src={currentSrc} onCanPlay={() => setAudioCanPlay(true)} onEnded={() => nextTrack()} loop={!!audioLibrary[selectedTrack].loop}/>
+        <audio id="audioPlayer" autoPlay={false} src={currentSrc} onCanPlay={() => setAudioCanPlay(true)} onEnded={() => nextTrack()} loop={loopTrack} onTimeUpdate={() => setTimeout(calcSeekWidth, 500)}/>
 
-        <div className='w-full h-fit relative bg-slate-200' onClick={(()=>toggleTape())}>
-            <img className={`absolute object-contain z-50 ${!!tapeArt ? "top-[-22.4rem]" : "top-[-37.6rem]"} transition-top ease-in-out ${!!tapeArt ? "duration-700" : 'duration-[900ms]'}`} src={radioUnlocked ? radioCase : ''} alt='cover art' width={384} height={601}/>
+        <div className='w-full h-fit relative bg-slate-200' onClick={()=>toggleCaseDisplay()}>
+            <img className={`absolute object-contain z-50 ${!!caseDisplay ? "top-[-22.4rem]" : "top-[-37.6rem]"} transition-top ease-in-out ${!!caseDisplay ? "duration-700" : 'duration-[900ms]'}`} src={caseArt} alt='cover art' width={384} height={601}/>
         </div>
 
-        <div className={`w-full h-fit relative bg-slate-200`} onClick={()=>tapeDropCheck()}>
-            <div className={`${!!localStorage.getItem("radioUnlocked") ? 'hidden' : ''} h-fit w-fit fixed left-52 top-[-3rem] z-50 tape ${!!peekClick ? 'tape-peek' : (!!tapeDrop ? 'tape-drop' : '')}`}>
-                <img className='h-[75%] w-[75%] shadow-[2px_2px_5px_rgba(0,0,0,0.7)]' src='./src/assets/images/radio_404_mini.jpg' alt='mini tape'/>
+        <div id='tape-art-and-selection' className={`w-full h-fit relative bg-slate-200`} onClick={()=>toggleCaseDisplay()}>
+        {!!tapeLoaded ?  
+            <img className='object-contain z-40' src={tapeArt} alt='current track album art' width={384} height={243}/>
+        : 
+            <div className='h-[242px] w-[384px]' onClick={()=>{}}>
+                <TapeSelection setTapeLoaded={setTapeLoaded} setAudioCanPlay={setAudioCanPlay} setJsonAudioLibrary={setJsonAudioLibrary} setLibraryShuffle={setLibraryShuffle} setTapeArt={setTapeArt} setCaseArt={setCaseArt}/>
             </div>
-            <img className='object-contain z-40' src={ !!radioUnlocked ? radioTape : './src/assets/images/lost_note.png'} alt='current track album art' width={384} height={243}/>
+        }
         </div>
         
-        <div className={`flex flex-row items-center justify-around h-14 w-96 bg-white rounded-br-lg shadow-[-2px_2px_6px_rgb(36,36,36)]`}>
+        <div id='mini-player' className={`relative flex flex-row items-center justify-around h-14 w-96 bg-white rounded-br-lg shadow-[-2px_2px_6px_rgb(36,36,36)]`}>
+            <div id='time-track-container' className='absolute w-full h-1 top-0 z-40 cursor-pointer' onClick={(e)=> seek(e)}>
+                <div id='tracking-bar' style={{width: '0%'}} className={`h-full bg-bill-magenta transition-[width] ease-linear duration-500 pointer-events-none`}>
+
+                </div>
+            </div>
 
             <div className='z-30' onClick={()=>handlePlay(getRadios().audio)}>
                 <i className={`bi ${!playing ? `bi-play-fill` : `bi-pause-fill`} text-4xl mx-2 text-bill-magenta drop-shadow-[-1px_1px_0px_rgb(0,0,0)]`}/>
             </div>
 
-            <div className={`hairline text-2xl font-bold marquee w-72 z-30`} onClick={() => nextTrack()}>
+            <div id='scrolling-marquee-container' className={`hairline text-2xl font-bold marquee w-72 z-30`} onClick={() => nextTrack()}>
 
                 <ul id="radioMarquee" className='marquee__content' style={{animationDuration: `${marqueeScrollDuration}s`}}>
                     <li>
-                        <p>{ !radioUnlocked || !audioCanPlay ? "Looking for the tape..." : audioLibrary[selectedTrack].title}</p>
+                        <p>{!audioCanPlay ? "Looking for the tape..." : audioLibrary[selectedTrack].title}</p>
                     </li>
                     <li className='text-3xl'>
-                        {!!audioLibrary[selectedTrack].loop ? 
+                        {!!loopTrack ? 
                         <i className="bi bi-repeat text-bill-magenta drop-shadow-bill-black-flat"></i> 
                         : 
                         <i className="bi bi-cassette-fill text-bill-magenta drop-shadow-bill-black-flat"></i>
                         }
                     </li>
                     <li>
-                        <p>{ !radioUnlocked || !audioCanPlay ? "Looking for the tape..." : audioLibrary[selectedTrack].artist}</p>
+                        <p>{!audioCanPlay ? "Looking for the tape..." : audioLibrary[selectedTrack].artist}</p>
                     </li>
                     <li className='text-3xl'>
-                        {!!audioLibrary[selectedTrack].loop ? 
+                        {!!loopTrack ? 
                         <i className="bi bi-repeat text-bill-magenta drop-shadow-bill-black-flat"></i> 
                         : 
                         <i className="bi bi-cassette-fill text-bill-magenta drop-shadow-bill-black-flat"></i>
@@ -458,20 +490,20 @@ export default function page({radioUnlocked, setRadioUnlocked}:RadioProps) {
 
                 <ul id='hiddenMarquee' aria-hidden='true' className='marquee__content' style={{animationDuration: `${marqueeScrollDuration}s`}}>
                     <li>
-                        <p>{ !radioUnlocked || !audioCanPlay ? "Looking for the tape..." : audioLibrary[selectedTrack].title}</p>
+                        <p>{!audioCanPlay ? "Looking for the tape..." : audioLibrary[selectedTrack].title}</p>
                     </li>
                     <li className='text-3xl'>
-                        {!!audioLibrary[selectedTrack].loop ? 
+                        {!!loopTrack ? 
                         <i className="bi bi-repeat text-bill-magenta drop-shadow-bill-black-flat"></i> 
                         : 
                         <i className="bi bi-cassette-fill text-bill-magenta drop-shadow-bill-black-flat"></i>
                         }
                     </li>
                     <li>
-                        <p>{ !radioUnlocked || !audioCanPlay ? "Looking for the tape..." : audioLibrary[selectedTrack].artist}</p>
+                        <p>{!audioCanPlay ? "Looking for the tape..." : audioLibrary[selectedTrack].artist}</p>
                     </li>
                     <li className='text-3xl'>
-                        {!!audioLibrary[selectedTrack].loop ? 
+                        {!!loopTrack ? 
                         <i className="bi bi-repeat text-bill-magenta drop-shadow-bill-black-flat"></i> 
                         : 
                         <i className="bi bi-cassette-fill text-bill-magenta drop-shadow-bill-black-flat"></i>
@@ -482,8 +514,8 @@ export default function page({radioUnlocked, setRadioUnlocked}:RadioProps) {
             </div>
             
             
-            <div className='z-30' onClick={() => expand()}>
-                <i className={`bi ${!expanded ? 'bi-chevron-double-down' : 'bi-chevron-double-up'} text-2xl mx-2`}></i>
+            <div id='expand-tab' className='z-30' onClick={() => expand()}>
+                <i className={`bi ${!tapeDisplay ? 'bi-chevron-double-down' : 'bi-chevron-double-up'} text-2xl mx-2`}></i>
             </div>
 
             <div className={`absolute h-14 w-96 bg-white rounded-br-lg z-20`}></div>
@@ -493,11 +525,16 @@ export default function page({radioUnlocked, setRadioUnlocked}:RadioProps) {
         
 
         <div className='relative w-96 h-5 flex justify-center'>
-            <div className='relative w-32'></div>
+            
+            <div className='relative w-32 flex justify-center text-lg'>
+                <div className='w-fit h-fit' onClick={() => handleEject()}>
+                    <i className={`bi bi-eject-fill pr-2 ${ !!tapeLoaded ? 'hover:text-bill-magenta hover:drop-shadow-[-2px_2px_0_rgba(0,0,0,1)] cursor-pointer' : 'text-gray-500'}`}></i>
+                </div>
+            </div>
 
             <div className='relative w-24 rounded-b bg-white shadow-[-2px_2px_4px_rgb(36,36,36)] flex justify-center items-center' onClick={() => toggle()}><i className={`bi ${!visible ? `bi-chevron-compact-down` : `bi-chevron-compact-up`} text-2xl`}></i></div>
 
-            <div className='relative bungee h-6 w-32 flex justify-around items-center pl-3 pt-1 select-none overflow-hidden'>
+            <div className='relative bungee h-4 w-32 flex justify-around items-center pl-3 pt-1 select-none overflow-visible'>
                 <div id="volDown" className='w-6 text-center text-2xl hover:text-bill-magenta hover:drop-shadow-[-2px_2px_0_rgba(0,0,0,1)] cursor-pointer' onClick={(event) => handleVolume(event)}>-</div>
                 <div className={`hairline w-6 text-center font-bold text-xl`}>{volume}</div>
                 <div id="volUp" className='w-6 text-center text-2xl hover:text-bill-magenta hover:drop-shadow-[-2px_2px_0_rgba(0,0,0,1)] cursor-pointer' onClick={(event) => handleVolume(event)}>+</div>
