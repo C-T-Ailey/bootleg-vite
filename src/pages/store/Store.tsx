@@ -87,7 +87,7 @@ export default function Store() {
     <div className="w-full flex flex-col items-center w-fit">
         <div>Store</div>
         <Filter selectedSource={selectedSource} selectedFormat={selectedFormat} selectedSort={selectedSort} setSelectedSource={setSelectedSource} setSelectedFormat={setSelectedFormat} setSelectedSort={setSelectedSort}/>
-        <div className="grid grid-cols-5 gap-2">
+        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2">
           {filteredProductList.map((product, index) => 
           (
             <ProductCard key={index} product={product}/>

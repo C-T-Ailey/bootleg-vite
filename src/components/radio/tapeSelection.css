@@ -1,0 +1,14 @@
+#select {
+    transition: 0.3s;
+    /* transform: translateX(100px); */
+  }
+
+@keyframes currentOut {
+    0% {
+        transform: translateX(0);
+    }
+    100% {
+        transform: translateX(1000px);
+        opacity: 0;
+    }
+}

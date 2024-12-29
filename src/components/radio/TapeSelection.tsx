@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import './tapeSelection.css'
 
 interface selectionProps {
     setTapeLoaded: React.Dispatch<React.SetStateAction<boolean>>;
@@ -787,6 +788,10 @@ export default function TapeSelection({setTapeLoaded,setJsonAudioLibrary,setLibr
     const handleNext = () => {
         const lastIndex: number = collection.length - 1
 
+        let select: HTMLDivElement = document.querySelector("#select")!
+
+        select.style.animation = "currentOut"
+
         if (current === lastIndex-1) {
             setPrev(current)
             setCurrent(current+1)
@@ -808,35 +813,54 @@ export default function TapeSelection({setTapeLoaded,setJsonAudioLibrary,setLibr
             setCurrent(current+1);
             setNext(current+2)
         }
+
     };
 
     useEffect(() => {
       console.log(currentSet)
     }, [])
     
+    const prevNextStyle = 'w-16 hover:w-20 h-fit border-2 rounded-sm bg-black text-white text-center transition-[width] ease-out duration-200 '
+
+    const currentStyle = 'w-32 h-fit border-2 rounded-sm bg-black text-white text-center'
+
 
 
   return (
-    <div className='flex flex-row items-center justify-around h-full w-full bg-white'>
-        {currentSet.map((tape, index) => (
+    <div className='flex flex-row items-center justify-around h-full w-full bg-black'>
+        {
+        // currentSet.map((tape, index) => (
+        //     <>
+        //     { index < 1 ? 
+        //         <div key={index} className='w-16 hover:w-20 h-fit border-2 rounded-sm bg-black text-white text-center transition-[width] ease-out duration-200' onClick={()=>handlePrev()}>
+        //             <img src={tape.caseArt} alt='previous tape' />
+        //         </div> 
+        //     : index == 1 ? 
+        //         <div key={index} className='w-32 h-fit border-2 rounded-sm bg-black text-white text-center' onClick={()=>handleSelect()}>
+        //             {/* {tape.title} */}
+        //             <img src={tape.caseArt} alt='currently focused music tape' />
+        //         </div>
+        //     : 
+        //         <div key={index} className='w-16 hover:w-20 h-fit border-2 rounded-sm bg-black text-white text-center transition-[width] ease-out duration-200 ' onClick={()=>handleNext()}>
+        //             <img src={tape.caseArt} alt='next tape' />
+        //         </div>
+        //     }
+        //     </>
+        // )
+        // )
+
+        currentSet.map((tape, index) => (
             <>
-            { index < 1 ? 
-                <div key={index} className='w-16 h-fit border-2 rounded-sm bg-black text-white text-center' onClick={()=>handlePrev()}>
+            { 
+                <div key={index} id={index < 1 ? 'prev' : index === 1 ? 'select' : 'next' } className={index < 1 ? prevNextStyle : index === 1 ? currentStyle : prevNextStyle } onClick={()=> index < 1 ? handlePrev() : index === 1 ? handleSelect() : handleNext()}>
                     <img src={tape.caseArt} alt='previous tape' />
                 </div> 
-            : index == 1 ? 
-                <div key={index} className='w-32 h-fit border-2 rounded-sm bg-black text-white text-center' onClick={()=>handleSelect()}>
-                    {/* {tape.title} */}
-                    <img src={tape.caseArt} alt='currently focused music tape' />
-                </div>
-            : 
-                <div key={index} className='w-16 h-fit border-2 rounded-sm bg-black text-white text-center' onClick={()=>handleNext()}>
-                    <img src={tape.caseArt} alt='next tape' />
-                </div>
             }
             </>
         )
-        )}
+        )
+
+        }
     </div>
   )
 }

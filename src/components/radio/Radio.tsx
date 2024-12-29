@@ -20,7 +20,12 @@ const radioTape: string = './src/assets/images/radio_404_tape.png'
 // const truthCase: string = '/src/assets/images/sample/truth.jpg'
 // const truthTape: string = '/src/assets/images/sample/truth_tape.jpg'
 
-export default function page() {
+interface RadioProps {
+    viewMode: string;
+    setViewMode: React.Dispatch<React.SetStateAction<string>>;
+}
+
+export default function page({viewMode, setViewMode}:RadioProps) {
 
     const defaultAudioLibrary = JSON.stringify([
         {
@@ -446,13 +451,13 @@ export default function page() {
         {!!tapeLoaded ?  
             <img className='object-contain z-40' src={tapeArt} alt='current track album art' width={384} height={243}/>
         : 
-            <div className='h-[242px] w-[384px]' onClick={()=>{}}>
+            <div className={'h-[242px] w-[384px]'} onClick={()=>{}}>
                 <TapeSelection setTapeLoaded={setTapeLoaded} setAudioCanPlay={setAudioCanPlay} setJsonAudioLibrary={setJsonAudioLibrary} setLibraryShuffle={setLibraryShuffle} setTapeArt={setTapeArt} setCaseArt={setCaseArt}/>
             </div>
         }
         </div>
         
-        <div id='mini-player' className={`relative flex flex-row items-center justify-around h-14 w-96 bg-white rounded-br-lg shadow-[-2px_2px_6px_rgb(36,36,36)]`}>
+        <div id='mini-player' className={`relative flex flex-row items-center justify-around h-14 w-96 rounded-br-lg ${viewMode === "light" ? 'bg-white shadow-[-2px_2px_6px_rgb(36,36,36)]' : 'bg-black text-bill-magenta shadow-[-2px_2px_6px_#ff4da6]'}`}>
             <div id='time-track-container' className='absolute w-full h-1 top-0 z-40 cursor-pointer' onClick={(e)=> seek(e)}>
                 <div id='tracking-bar' style={{width: '0%'}} className={`h-full bg-bill-magenta transition-[width] ease-linear duration-500 pointer-events-none`}>
 
@@ -518,7 +523,7 @@ export default function page() {
                 <i className={`bi ${!tapeDisplay ? 'bi-chevron-double-down' : 'bi-chevron-double-up'} text-2xl mx-2`}></i>
             </div>
 
-            <div className={`absolute h-14 w-96 bg-white rounded-br-lg z-20`}></div>
+            <div className={`absolute h-14 w-96 rounded-br-lg z-20 ${viewMode === "light" ? 'bg-white' : 'bg-black'}`}></div>
 
         </div>
 
@@ -532,12 +537,12 @@ export default function page() {
                 </div>
             </div>
 
-            <div className='relative w-24 rounded-b bg-white shadow-[-2px_2px_4px_rgb(36,36,36)] flex justify-center items-center' onClick={() => toggle()}><i className={`bi ${!visible ? `bi-chevron-compact-down` : `bi-chevron-compact-up`} text-2xl`}></i></div>
+            <div className={`relative w-24 rounded-b flex justify-center items-center ${viewMode === "light" ? 'bg-white shadow-[-2px_2px_4px_rgb(36,36,36)]' : 'bg-black text-bill-magenta shadow-[-2px_2px_6px_#ff4da6]'}`} onClick={() => toggle()}><i className={`bi ${!visible ? `bi-chevron-compact-down` : `bi-chevron-compact-up`} text-2xl`}></i></div>
 
             <div className='relative bungee h-4 w-32 flex justify-around items-center pl-3 pt-1 select-none overflow-visible'>
-                <div id="volDown" className='w-6 text-center text-2xl hover:text-bill-magenta hover:drop-shadow-[-2px_2px_0_rgba(0,0,0,1)] cursor-pointer' onClick={(event) => handleVolume(event)}>-</div>
+                <div id="volDown" className={`w-6 text-center text-2xl ${viewMode === "light" ? 'text-black hover:text-bill-magenta hover:drop-shadow-[-2px_2px_0_rgba(0,0,0,1)]' : 'text-bill-magenta hover:text-black  hover:drop-shadow-[-2px_2px_0_#ff2273]'  }  cursor-pointer`} onClick={(event) => handleVolume(event)}>-</div>
                 <div className={`hairline w-6 text-center font-bold text-xl`}>{volume}</div>
-                <div id="volUp" className='w-6 text-center text-2xl hover:text-bill-magenta hover:drop-shadow-[-2px_2px_0_rgba(0,0,0,1)] cursor-pointer' onClick={(event) => handleVolume(event)}>+</div>
+                <div id="volUp" className={`w-6 text-center text-2xl ${viewMode === "light" ? 'text-black hover:text-bill-magenta hover:drop-shadow-[-2px_2px_0_rgba(0,0,0,1)]' : 'text-bill-magenta hover:text-black  hover:drop-shadow-[-2px_2px_0_#ff2273]' }  cursor-pointer`} onClick={(event) => handleVolume(event)}>+</div>
             </div>
         </div>
     </div>

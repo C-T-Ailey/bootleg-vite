@@ -7,6 +7,11 @@
   font-weight: bolder;
 }
 
+.neon {
+  font-family: 'futurelight_regular', sans-serif;
+  text-shadow: 0 0 5px #fff, 0 0 5px #ff4da6, 0 0 5px #ff4da6, 0 0 5px #ff4da6, 0 0 5px #ff4da6, 0 0 5px #ff4da6, 0 0 5px #ff4da6;
+}
+
 .marker {
   font-family: "Permanent Marker", sans-serif;
 }
@@ -37,4 +42,60 @@
   100% {
       transform: translateX(calc(-100% - var(--gap)));
   }
+}
+
+.flicker {
+  animation: flicker 8s linear infinite
+}
+
+@keyframes flicker {
+  10% {
+    text-shadow: 0 0 5px #fff, 0 0 5px #ff4da6, 0 0 5px #ff4da6, 0 0 5px #ff4da6, 0 0 5px #ff4da6, 0 0 5px #ff4da6, 0 0 5px #ff4da6;
+    color: white;
+  }
+  11% {
+    text-shadow: none;
+    color: rgb(117, 117, 117)
+  }
+  12% {
+    text-shadow: 0 0 5px #fff, 0 0 5px #ff4da6, 0 0 5px #ff4da6, 0 0 5px #ff4da6, 0 0 5px #ff4da6, 0 0 5px #ff4da6, 0 0 5px #ff4da6;
+    color: white;
+  }
+
+
+  22% {
+    text-shadow: 0 0 5px #fff, 0 0 5px #ff4da6, 0 0 5px #ff4da6, 0 0 5px #ff4da6, 0 0 5px #ff4da6, 0 0 5px #ff4da6, 0 0 5px #ff4da6;
+    color: white;
+  }
+  23% {
+    text-shadow: none;
+    color: rgb(117, 117, 117)
+  }
+  24% {
+    text-shadow: 0 0 5px #fff, 0 0 5px #ff4da6, 0 0 5px #ff4da6, 0 0 5px #ff4da6, 0 0 5px #ff4da6, 0 0 5px #ff4da6, 0 0 5px #ff4da6;
+    color: white;
+  }
+
+
+  26%{
+    text-shadow: 0 0 5px #fff, 0 0 5px #ff4da6, 0 0 5px #ff4da6, 0 0 5px #ff4da6, 0 0 5px #ff4da6, 0 0 5px #ff4da6, 0 0 5px #ff4da6;
+    color: white;
+  }
+
+  27% {
+    text-shadow: none;
+    color: rgb(117, 117, 117)
+  }
+
+  50% {
+    text-shadow: none;
+    color: rgb(117, 117, 117)
+  }
+
+  51% {
+    text-shadow: 0 0 5px #fff, 0 0 5px #ff4da6, 0 0 5px #ff4da6, 0 0 5px #ff4da6, 0 0 5px #ff4da6, 0 0 5px #ff4da6, 0 0 5px #ff4da6;
+    color: white;
+  }
+
+
 }

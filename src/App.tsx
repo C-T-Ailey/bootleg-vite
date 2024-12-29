@@ -128,10 +128,17 @@ function App() {
 
           {/* <div className='w-12 h-12 absolute top-[90vh] right-10 bg-bill-magenta rounded-xl flex items-center justify-center text-2xl' onClick={()=>resetRadio()}>X</div> */}
         
-          <div className='w-fit h-20 lg:h-full pl-3 pt-1 lg:pl-4 lg:pb-1 flex flex-col items-center select-none'>
-            <p className='text-3xl lg:text-4xl text-bill-yellow drop-shadow-[0_7px_1px_#ff2273ff]'>BOOTLEG BILL'S</p>
-            <p className={`marker text-lg lg:text-2xl`}>Unofficial Audio Rarities</p>
-          </div>
+            { viewMode === "light" ?
+            <div className='w-fit h-20 lg:h-full pl-3 pt-1 lg:pl-4 lg:pb-1 flex flex-col items-center select-none'>
+              <p className='text-3xl lg:text-4xl text-bill-yellow drop-shadow-[0_7px_1px_#ff2273ff]'>BOOTLEG BILL'S</p>
+              <p className={`marker text-lg lg:text-2xl `}>Unofficial Audio Rarities</p>
+            </div>
+            :
+            <div className='w-fit h-20 lg:h-full pl-3 pt-0 lg:pl-4 lg:pb-1 flex flex-col items-center select-none'>
+              <p className='text-3xl lg:text-5xl neon'>BOOTLEG BILL'S</p>
+              <p className={`neon text-lg lg:text-3xl text-white`}>AFT<span className='flicker'>E</span>R D<span>A</span>RK</p>
+            </div>
+            }
         
           {/* mobile view */}
         
@@ -189,7 +196,7 @@ function App() {
 
         {
           !!radioUnlocked ?
-          <Radio/>
+          <Radio viewMode={viewMode} setViewMode={setViewMode}/>
           :
           <LockedRadio radioUnlocked={radioUnlocked} setRadioUnlocked={setRadioUnlocked} />
         }

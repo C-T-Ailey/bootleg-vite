@@ -2,7 +2,7 @@
 
 export default function About() {
   return (
-    <div className="hairline text-2xl flex flex-col items-center w-[80%] max-w-[60rem]">
+    <div className="hairline text-md lg:text-2xl flex flex-col items-center w-[80%] max-w-[60rem]">
       
       <br/>
       <div>
