@@ -124,27 +124,28 @@ function App() {
   return (
     
       <div className={`${viewMode === "light" ? 'bg-white' : 'bg-[#00807F] text-white'} transition-colors ease duration-500`}>
+
         <div className='bungee w-screen fixed flex flex-col lg:flex-row justify-center items-between lg:justify-between lg:items-center lg:h-20 bg-bill-cyan shadow-md z-[9999]'>
 
           {/* <div className='w-12 h-12 absolute top-[90vh] right-10 bg-bill-magenta rounded-xl flex items-center justify-center text-2xl' onClick={()=>resetRadio()}>X</div> */}
         
-            { viewMode === "light" ?
-            <div className='w-fit h-20 lg:h-full pl-3 pt-1 lg:pl-4 lg:pb-1 flex flex-col items-center select-none'>
-              <p className='text-3xl lg:text-4xl text-bill-yellow drop-shadow-[0_7px_1px_#ff2273ff]'>BOOTLEG BILL'S</p>
-              <p className={`marker text-lg lg:text-2xl `}>Unofficial Audio Rarities</p>
-            </div>
-            :
-            <div className='w-fit h-20 lg:h-full pl-3 pt-0 lg:pl-4 lg:pb-1 flex flex-col items-center select-none'>
-              <p className='text-3xl lg:text-5xl neon'>BOOTLEG BILL'S</p>
-              <p className={`neon text-lg lg:text-3xl text-white`}>AFT<span className='flicker'>E</span>R D<span>A</span>RK</p>
-            </div>
-            }
+          { viewMode === "light" ?
+          <div className='w-fit h-20 lg:h-full pl-3 pt-1 lg:pl-4 lg:pb-1 flex flex-col items-center select-none'>
+            <p className='text-3xl lg:text-4xl text-bill-yellow drop-shadow-[0_7px_1px_#ff2273ff]'>BOOTLEG BILL'S</p>
+            <p className={`marker text-lg lg:text-2xl `}>Unofficial Audio Rarities</p>
+          </div>
+          :
+          <div className='w-fit h-20 lg:h-full pl-3 pt-0 lg:pl-4 lg:pb-1 flex flex-col items-center select-none'>
+            <p className='text-3xl lg:text-5xl neon'>BOOTLEG BILL'S</p>
+            <p className={`neon text-lg lg:text-3xl text-white`}>AFT<span className='flicker'>E</span>R D<span>A</span>RK</p>
+          </div>
+          }
         
           {/* mobile view */}
         
           <div className='lg:hidden w-full items-center flex px-4'>
         
-            <div id="overflow" className={`${navState} w-full overflow-hidden transition-height ease duration-[700ms]`}>
+            <div id="navOverflow" className={`${navState} w-full overflow-hidden transition-height ease duration-[700ms]`}>
         
               <div className='w-full flex items-center justify-between'>
                 <button className='h-12 w-12 flex justify-center items-center border-solid border-2 border-slate-600 shadow-[0_0_5px_black] rounded pt-1' onClick={() => toggle()}>
@@ -194,13 +195,15 @@ function App() {
           
         </div>
 
-        {
-          !!radioUnlocked ?
-          <Radio viewMode={viewMode} setViewMode={setViewMode}/>
-          :
-          <LockedRadio radioUnlocked={radioUnlocked} setRadioUnlocked={setRadioUnlocked} />
-        }
-        <div className={`hidden lg:flex fixed top-24 right-4 lg:w-16 h-8 border-4 ${ viewMode === "light" ? `border-gray-800` : `border-white` } rounded-full cursor-pointer transition-colors ease duration-500`} onClick={() => setViewMode(viewMode==="light" ? "dark" : 'light')}>
+        <div id='radioAppContainer' className='absolute lg:top-20'>
+          {
+            !!radioUnlocked ?
+            <Radio viewMode={viewMode} setViewMode={setViewMode}/>
+            :
+            <LockedRadio radioUnlocked={radioUnlocked} setRadioUnlocked={setRadioUnlocked} />
+          }
+        </div>
+        <div id='viewMode' className={`hidden lg:flex fixed top-24 right-4 lg:w-16 h-8 border-4 ${ viewMode === "light" ? `border-gray-800` : `border-white` } rounded-full cursor-pointer transition-colors ease duration-500`} onClick={() => setViewMode(viewMode==="light" ? "dark" : 'light')}>
 
           <div className={`hidden lg:flex relative top-[0.1rem] h-5 w-5 rounded-full transition ease duration-500 ${ viewMode === "light" ? `bg-gray-800 left-[0.1rem]` : `bg-white left-[2.1rem]` }`}>
 

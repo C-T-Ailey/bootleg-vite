@@ -423,6 +423,7 @@ export default function page({viewMode, setViewMode}:RadioProps) {
         }
         else if (!visible) {
             return 'top-[-13.7rem]'
+            // return 'top-0'
         }
     }
 
@@ -438,7 +439,7 @@ export default function page({viewMode, setViewMode}:RadioProps) {
     }
 
     return (
-    <div id='radio' className={`hidden lg:flex fixed ${ handleTopSpacing() } w-96 h-fit flex-col items-center transition-top ease-in-out duration-700 z-50`}>
+    <div id='radio' className={`${ handleTopSpacing() } hidden lg:flex fixed lg:w-96 h-fit flex-col items-center transition-top ease-in-out duration-700 z-50`}>
 
         <audio id="hiss" autoPlay={false} src='./src/assets/audio/tapehiss.wav' loop/>
         <audio id="audioPlayer" autoPlay={false} src={currentSrc} onCanPlay={() => setAudioCanPlay(true)} onEnded={() => nextTrack()} loop={loopTrack} onTimeUpdate={() => setTimeout(calcSeekWidth, 500)}/>
@@ -537,7 +538,7 @@ export default function page({viewMode, setViewMode}:RadioProps) {
                 </div>
             </div>
 
-            <div className={`relative w-24 rounded-b flex justify-center items-center ${viewMode === "light" ? 'bg-white shadow-[-2px_2px_4px_rgb(36,36,36)]' : 'bg-black text-bill-magenta shadow-[-2px_2px_6px_#ff4da6]'}`} onClick={() => toggle()}><i className={`bi ${!visible ? `bi-chevron-compact-down` : `bi-chevron-compact-up`} text-2xl`}></i></div>
+            <div className={`relative w-24 rounded-b flex justify-center items-center ${viewMode === "light" ? 'bg-white shadow-[-2px_2px_4px_rgb(36,36,36)]' : 'bg-black text-bill-magenta shadow-[-2px_2px_6px_#ff4da6]'}`} onClick={() => toggle()}><i className={`bi ${!visible ? `bi-emoji-sunglasses-fill` : `bi-chevron-compact-up`} text-2xl`}></i></div>
 
             <div className='relative bungee h-4 w-32 flex justify-around items-center pl-3 pt-1 select-none overflow-visible'>
                 <div id="volDown" className={`w-6 text-center text-2xl ${viewMode === "light" ? 'text-black hover:text-bill-magenta hover:drop-shadow-[-2px_2px_0_rgba(0,0,0,1)]' : 'text-bill-magenta hover:text-black  hover:drop-shadow-[-2px_2px_0_#ff2273]'  }  cursor-pointer`} onClick={(event) => handleVolume(event)}>-</div>
